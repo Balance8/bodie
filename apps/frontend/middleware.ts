@@ -13,11 +13,18 @@ export function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname.replace('/api/wg', '');
 
+  const environment = process.env.NODE_ENV || 'development';
+
+  const baseUrls = {
+    development: 'http://127.0.0.1:9991',
+    staging: process.env.STAGING_API_URL,
+    production: process.env.PRODUCTION_API_URL,
+  };
+
+  const baseUrl = baseUrls[environment];
+
   // rewrite the api url to the WunderGraph API
-  const url = new URL(
-    pathname + request.nextUrl.search,
-    'http://127.0.0.1:9991'
-  );
+  const url = new URL(pathname + request.nextUrl.search, baseUrl);
 
   // add the token to the Authorization header
   const headers = new Headers({
